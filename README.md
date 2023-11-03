@@ -1,4 +1,4 @@
-# IceSimpleThinble
+# IceThimble
 This repository includes the code used for our editied files for use of the [SimpleThimble Project](https://simplethimble.readthedocs.io/en/latest/index.html "Original project documentation").
 
 The updated code is modified to a Tiny Pico platform (using ESP32) for both hand device and  dongle. The esp32 servo library is required. 
