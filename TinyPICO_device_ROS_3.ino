@@ -84,7 +84,7 @@ void subscription_callback(const void *msgin)
 void setup() {
   Serial.begin(115200);
 
-  set_microros_wifi_transports("JM2_nett", "autyn33369", "192.168.0.107", 8888);
+  set_microros_wifi_transports("JM2_nett", "xxxxx", "192.168.0.107", 8888);
 
   delay(2000);
   
