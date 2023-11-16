@@ -9,3 +9,18 @@ In adittion a new version using micro ros for arduino is added. A micro ros host
 x - thunb
 y - index
 z - middle
+
+<div hidden>
+```
+@startuml firstDiagram
+
+Alice -> Bob: Hello
+Bob -> Alice: Hi!
+		
+@enduml
+```
+</div>
+
+![](firstDiagram.svg)
+
+Some more markdown.
