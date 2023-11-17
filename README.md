@@ -6,21 +6,13 @@ The updated code is modified to a Tiny Pico platform (using ESP32) for both hand
 # Micro ROS version
 In adittion a new version using micro ros for arduino is added. A micro ros host need to be set up on the host computer and the communication os made on a topic ok the host. omputer. Due too difficulties with dynamic list, twist is used as message type. This is the connection between twist and fingers are
 
+linear:
 x - thunb
 y - index
 z - middle
 
-<div hidden>
-```
-@startuml firstDiagram
+linear:
+x - ring
+y - little
+z - palm
 
-Alice -> Bob: Hello
-Bob -> Alice: Hi!
-		
-@enduml
-```
-</div>
-
-![](firstDiagram.svg)
-
-Some more markdown.
