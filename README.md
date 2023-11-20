@@ -1,4 +1,4 @@
-# IceThimble
+# :ice_cube: IceThimble :gloves:
 
 This repository includes the code used for our edited files for use of the [SimpleThimble Project](https://simplethimble.readthedocs.io/en/latest/index.html "Original project documentation").
 
@@ -93,11 +93,11 @@ Bob-->Alice: I am good thanks!
 @enduml
 ```
 ```plantuml
-@startuml MyFirstClassDiagram
-
-class Car
+@startuml
+car->hie
+hie->hoe
 
 @enduml
 ```
 
-![](MyFirstClassDiagram.svg)
+![](MyFirstClassDiagram)
