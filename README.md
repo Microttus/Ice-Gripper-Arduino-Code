@@ -81,8 +81,23 @@ ros2 topic pub -once /finger_force geometry_msgs/msg/Twist "{linear: {x: 200.0, 
 ```
 
 
+```plantuml
+@startuml firstDiagram
 
+
+
+Alice->Bob: Hello Bob, how are you?
+Note right of Bob: Bob thinks
+Bob-->Alice: I am good thanks!
+
+@enduml
 ```
+```plantuml
+@startuml MyFirstClassDiagram
 
+class Car
+
+@enduml
+```
 
 
