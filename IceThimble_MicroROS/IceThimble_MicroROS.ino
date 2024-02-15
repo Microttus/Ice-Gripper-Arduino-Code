@@ -46,8 +46,8 @@ Servo servo_ring;
 //Servo servo_little;
 
 // Set servo pin number
-int servo_pin_thumb = 32;
-int servo_pin_index = 33;
+int servo_pin_thumb = 4;//32;
+int servo_pin_index = 22;//33;
 int servo_pin_middle = 27;
 int servo_pin_ring = 15;
 
@@ -64,10 +64,17 @@ void error_loop(){
 
 void ServoControl()
 {
+  //Testing delay
+  delay(2);
   servo_thumb.write(map(static_cast<int>(forceData.force_sensed_thumb), 0, 255, offset[0], limit));
   servo_index.write(map(static_cast<int>(forceData.force_sensed_index), 0, 255, offset[1], limit));
-  servo_thumb.write(map(static_cast<int>(forceData.force_sensed_middle), 0, 255, offset[2], limit));
-  servo_index.write(map(static_cast<int>(forceData.force_sensed_ring), 0, 255, offset[3], limit));
+  servo_middle.write(map(static_cast<int>(forceData.force_sensed_middle), 0, 255, offset[2], limit));
+  servo_ring.write(map(static_cast<int>(forceData.force_sensed_ring), 0, 255, offset[3], limit));
+
+  delay(6);
+
+  //Serial.println(forceData.force_sensed_thumb);
+  //Serial.println(servo_thumb_val);
 }
 
 void subscription_callback(const void *msgin)
@@ -80,6 +87,7 @@ void subscription_callback(const void *msgin)
   forceData.force_sensed_index = static_cast<float>(newPos.y);
   forceData.force_sensed_middle = static_cast<float>(newPos.z);
   forceData.force_sensed_ring = static_cast<float>(newPos2.x);
+
   
   ServoControl();
 }
@@ -115,32 +123,33 @@ void setup() {
 
   // Hardware setup
   // Attach the servos to their respective pins
-  servo_index.attach(servo_pin_thumb); 
-  servo_thumb.attach(servo_pin_index);
+  servo_thumb.attach(servo_pin_thumb); 
+  servo_index.attach(servo_pin_index);
   servo_middle.attach(servo_pin_middle); 
   servo_ring.attach(servo_pin_ring);
 
   // Start up sequence
   servo_index.write(0);
   servo_thumb.write(0);
-  servo_middle.write(0);
-  servo_ring.write(0);
+  //servo_middle.write(0);
+  //servo_ring.write(0);
   delay(500);
   servo_index.write(offset[0]);
   servo_thumb.write(offset[1]);
-  servo_middle.write(offset[2]);
-  servo_ring.write(offset[3]);
+  //servo_middle.write(offset[2]);
+  //servo_ring.write(offset[3]);
   delay(500);
   servo_index.write(0);
   servo_thumb.write(0);
-  servo_middle.write(0);
-  servo_ring.write(0);
+  //servo_middle.write(0);
+  //servo_ring.write(0);
   delay(2000);
 }
 
 void loop() {
   // Status green for ready
   tp.DotStar_SetPixelColor(0, 255, 0);
-  delay(10);
+  //delay(10);
   RCCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(10)));
+
 }
