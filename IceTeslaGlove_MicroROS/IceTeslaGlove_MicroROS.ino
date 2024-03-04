@@ -46,10 +46,10 @@ Servo servo_ring;
 //Servo servo_little;
 
 // Set servo pin number
-int servo_pin_thumb = 32;//32-4;
-int servo_pin_index = 33;//33-22;
-int servo_pin_middle = 27;
-int servo_pin_ring = 15;
+int servo_pin_thumb = 33;//32-4;
+int servo_pin_index = 32;//33-22;
+int servo_pin_middle = 4;
+int servo_pin_ring = 14;
 
 // Initialize other auxiliary variables
 int limit = 254;
@@ -70,7 +70,7 @@ void ServoControl()
   servo_middle.write(map(static_cast<int>(forceData.force_sensed_middle), 0, 255, offset[2], limit));
   servo_ring.write(map(static_cast<int>(forceData.force_sensed_ring), 0, 255, offset[3], limit));
 
-  delay(1);
+  delay(5);
 
   Serial.println(forceData.force_sensed_thumb);
   //Serial.println(servo_thumb_val);
@@ -87,8 +87,8 @@ void subscription_callback(const void *msgin)
   forceData.force_sensed_middle = static_cast<float>(newPos.z);
   forceData.force_sensed_ring = static_cast<float>(newPos2.x);
 
+  //ServoControl();
   
-  ServoControl();
 }
 
 void setup() {
@@ -148,7 +148,12 @@ void setup() {
 void loop() {
   // Status green for ready
   tp.DotStar_SetPixelColor(0, 255, 0);
+
   //delay(10);
-  RCCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(5)));
+  RCCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(10)));
+
+  // Set servo poositions
+  ServoControl();
+  Serial.println("Hei");
 
 }
