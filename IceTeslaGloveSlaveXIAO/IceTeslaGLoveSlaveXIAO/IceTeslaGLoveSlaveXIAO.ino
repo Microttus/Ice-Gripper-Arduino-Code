@@ -38,6 +38,27 @@ void onRequest(){
   Wire.write((uint8_t*)&posData, sizeof(posData));
 }
 
+void for_serial_print(){
+  posData.force_sensed_thumb = analogRead(thumb_pin);
+  posData.force_sensed_index = analogRead(index_pin);
+  posData.force_sensed_middle = analogRead(middle_pin);
+  posData.force_sensed_ring = analogRead(ring_pin);
+  posData.force_sensed_little = analogRead(little_pin);
+
+  Serial.print("Thumb: ");
+  Serial.print(posData.force_sensed_thumb);
+  Serial.print(" - Index: ");
+  Serial.print(posData.force_sensed_index);
+  Serial.print(" - Middle: ");
+  Serial.print(posData.force_sensed_middle);
+  Serial.print(" - Ring: ");
+  Serial.print(posData.force_sensed_ring);
+  Serial.print(" - Little: ");
+  Serial.println(posData.force_sensed_little);
+
+  delay(200);
+}
+
 
 void setup() {
   Wire.begin((uint8_t)I2C_DEV_ADDR);
@@ -50,4 +71,5 @@ void setup() {
 }
 
 void loop() {
+  
 }
