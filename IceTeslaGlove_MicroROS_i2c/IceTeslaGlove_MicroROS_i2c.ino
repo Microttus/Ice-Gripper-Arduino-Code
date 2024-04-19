@@ -60,8 +60,10 @@ struct servo_pos servoPos;
 struct servo_pos forcePos;
 
 // Initialize profile setting
-int load_cell_pos_profile[6][2] = {{3000, 1500}, {2000, 600}, {2500, 1500}, {3000, 1000}, {1, 0}, {1, 0}};
+//int load_cell_pos_profile[6][2] = {{3000, 1500}, {3400, 1500}, {2500, 1100}, {2500, 800}, {1, 0}, {1, 0}};
+int load_cell_pos_profile[6][2] = {{180, 140}, {180, 110}, {200, 150}, {200, 130}, {160, 100}, {42, 0}};
 int proto_1[8] = {50, 130, 30, 110, 250, 140, 210, 160};
+int proto_2[8] = {80, 120, 120, 60, 100, 160, 140, 60};
 float comp_filter_const = 1;
 float filter_in_sign = 0.1;
 
@@ -105,31 +107,31 @@ void ReadFingerPos()
   }
 
   // Read the received data into the array
-  for (int i = 0; i < 6; i++) {
+  for (int i = 0; i < 10; i++) {
     receivedData[i] = Wire.read();
     receivedData[i] |= (Wire.read() << 8);
   }
 
   posData.force_sensed_thumb = comp_filter_f(constrain(receivedData[0], load_cell_pos_profile[0][0], load_cell_pos_profile[0][1]),posData.force_sensed_thumb);
-  posData.force_sensed_index = comp_filter_f(constrain(receivedData[2], load_cell_pos_profile[1][0], load_cell_pos_profile[1][1]),posData.force_sensed_index);
+  posData.force_sensed_index = comp_filter_f(constrain(receivedData[2], load_cell_pos_profile[1][1], load_cell_pos_profile[1][0]),posData.force_sensed_index);
   posData.force_sensed_middle = comp_filter_f(constrain(receivedData[4], load_cell_pos_profile[2][1], load_cell_pos_profile[2][0]),posData.force_sensed_middle);
-  posData.force_sensed_ring = comp_filter_f(constrain(receivedData[6], load_cell_pos_profile[3][0], load_cell_pos_profile[3][1]),posData.force_sensed_ring);
-  posData.force_sensed_little = comp_filter_f(constrain(receivedData[8], load_cell_pos_profile[4][0], load_cell_pos_profile[5][1]),posData.force_sensed_little);
+  posData.force_sensed_ring = comp_filter_f(constrain(receivedData[6], load_cell_pos_profile[3][1], load_cell_pos_profile[3][0]),posData.force_sensed_ring);
+  posData.force_sensed_little = comp_filter_f(constrain(receivedData[8], load_cell_pos_profile[4][1], load_cell_pos_profile[5][0]),posData.force_sensed_little);
   
-  Serial.print(receivedData[4]);
+  Serial.print(receivedData[6]);
   Serial.print(" -> ");
 }
 
 void finger_pos_to_servo()
 {
-  servoPos.thumb = comp_filter(map(static_cast<int>(posData.force_sensed_thumb), load_cell_pos_profile[0][1], load_cell_pos_profile[0][0], proto_1[0], proto_1[1]), servoPos.thumb);
-  servoPos.index = comp_filter(map(static_cast<int>(posData.force_sensed_index), load_cell_pos_profile[1][1], load_cell_pos_profile[1][0], proto_1[2], proto_1[3]), servoPos.index);
-  servoPos.middle = comp_filter(map(static_cast<int>(posData.force_sensed_middle), load_cell_pos_profile[2][1], load_cell_pos_profile[2][0], proto_1[5], proto_1[4]), servoPos.middle);
-  servoPos.ring = comp_filter(map(static_cast<int>(posData.force_sensed_ring), load_cell_pos_profile[3][1], load_cell_pos_profile[3][0], proto_1[6], proto_1[7]), servoPos.ring);
+  servoPos.thumb = comp_filter(map(static_cast<int>(posData.force_sensed_thumb), load_cell_pos_profile[0][1], load_cell_pos_profile[0][0], proto_2[0], proto_2[1]), servoPos.thumb);
+  servoPos.index = comp_filter(map(static_cast<int>(posData.force_sensed_index), load_cell_pos_profile[1][1], load_cell_pos_profile[1][0], proto_2[3], proto_2[2]), servoPos.index);
+  servoPos.middle = comp_filter(map(static_cast<int>(posData.force_sensed_middle), load_cell_pos_profile[2][1], load_cell_pos_profile[2][0], proto_2[5], proto_2[4]), servoPos.middle);
+  servoPos.ring = comp_filter(map(static_cast<int>(posData.force_sensed_ring), load_cell_pos_profile[3][1], load_cell_pos_profile[3][0], proto_2[6], proto_2[7]), servoPos.ring);
 
-  Serial.print(servoPos.middle);
+  Serial.print(servoPos.ring);
   Serial.print(" - ");
-  Serial.println(posData.force_sensed_middle);
+  Serial.println(posData.force_sensed_ring);
 }
 
 void finger_force_compensation()
@@ -174,14 +176,27 @@ void ServoControl()
 void ServoControlI2C()
 {
   //Testing delay
-  servo_thumb.write(map(servoPos.middle, 0, 255, offset[0], limit));
-  servo_index.write(map(servoPos.index, 0, 255, offset[1], limit));
-  servo_middle.write(map(servoPos.middle, 0, 255, offset[2], limit));
-  servo_ring.write(map(servoPos.ring, 0, 255, offset[3], limit));
+  servo_thumb.write(servoPos.thumb);
+  servo_index.write(servoPos.index);
+  servo_middle.write(servoPos.middle);
+  servo_ring.write(servoPos.ring);
 
   delay(5);
 
   Serial.println(forceData.force_sensed_thumb);
+}
+
+void ServoControlCal()
+{
+  //Testing delay
+  servo_thumb.write(forcePos.thumb);
+  servo_index.write(forcePos.index);
+  servo_middle.write(forcePos.middle);
+  servo_ring.write(forcePos.ring);
+
+  delay(5);
+
+  serial_print();
 }
 
 void subscription_callback(const void *msgin)
@@ -191,13 +206,25 @@ void subscription_callback(const void *msgin)
   auto newPos = msg->linear;
   auto newPos2 = msg->angular;
 
-  forcePos.thumb = static_cast<float>(newPos.x);
-  forcePos.index = static_cast<float>(newPos.y);
-  forcePos.middle = static_cast<float>(newPos.z);
-  forcePos.ring = static_cast<float>(newPos2.x);
+  forcePos.thumb = static_cast<int>(newPos.x);
+  forcePos.index = static_cast<int>(newPos.y);
+  forcePos.middle = static_cast<int>(newPos.z);
+  forcePos.ring = static_cast<int>(newPos2.x);
+
+  Serial.print(forcePos.thumb);
 
   //ServoControl();
   
+}
+
+void serial_print(){
+  Serial.print(servoPos.thumb);
+  Serial.print(" - ");
+  Serial.print(servoPos.index);
+  Serial.print(" - ");
+  Serial.print(servoPos.middle);
+  Serial.print(" - ");
+  Serial.println(servoPos.ring);
 }
 
 void setup() {
@@ -253,6 +280,11 @@ void setup() {
   servo_middle.write(90);
   servo_ring.write(90);
   delay(2000);
+
+  forcePos.thumb = 90;
+  forcePos.index = 90;
+  forcePos.middle = 90;
+  forcePos.ring = 90;
 }
 
 void loop() {
@@ -270,5 +302,8 @@ void loop() {
   finger_pos_to_servo();
   //finger_force_compensation();
   ServoControlI2C();
+
+  //ServoControlCal();
+  serial_print();
 
 }
