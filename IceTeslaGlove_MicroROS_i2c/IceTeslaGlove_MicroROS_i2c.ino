@@ -61,9 +61,9 @@ struct servo_pos forcePos;
 
 // Initialize profile setting
 //int load_cell_pos_profile[6][2] = {{3000, 1500}, {3400, 1500}, {2500, 1100}, {2500, 800}, {1, 0}, {1, 0}};
-int load_cell_pos_profile[6][2] = {{180, 140}, {180, 110}, {200, 150}, {200, 130}, {160, 100}, {42, 0}};
+int load_cell_pos_profile[6][2] = {{180, 120}, {180, 110}, {200, 150}, {200, 130}, {160, 100}, {42, 0}};
 int proto_1[8] = {50, 130, 30, 110, 250, 140, 210, 160};
-int proto_2[8] = {80, 120, 120, 60, 100, 160, 140, 60};
+int proto_2[8] = {100, 140, 120, 60, 100, 160, 140, 60};
 float comp_filter_const = 1;
 float filter_in_sign = 0.1;
 
